@@ -14,14 +14,20 @@ The rule lives in `src/earnings.mjs` and is covered by `test/earnings.test.mjs`.
 
 ## How it runs
 
-On the 2nd of every month at 06:00 UTC, a GitHub Actions job (`.github/workflows/update.yml`):
+ratings.fide.com refuses connections from GitHub's cloud runners, so the monthly fetch runs on the owner's Windows PC:
 
-1. runs the tests,
-2. fetches the full rating history from FIDE (`scripts/update.mjs`),
-3. recomputes records and earnings into `site/data.json` and commits it,
-4. publishes `site/` to GitHub Pages.
+1. On the 2nd of every month at 09:00, the Windows scheduled task "PauliusChess monthly FIDE update" runs `scripts/monthly.ps1`. If the PC is off then, the task runs as soon as the PC is back on.
+2. The script pulls, fetches the full history from FIDE (`scripts/update.mjs`), and recomputes `site/data.json`. If anything changed, it commits and pushes. It writes a log to `scripts/monthly.log`.
+3. The push triggers `.github/workflows/update.yml`, which runs the tests and publishes `site/` to https://tomyka.github.io/PauliusChess/.
 
-To run it now, open Actions, pick "Update ratings and publish", and choose "Run workflow".
+To refresh now: `pwsh scripts/monthly.ps1`, or `Start-ScheduledTask "PauliusChess monthly FIDE update"`.
+
+To set up the task on another PC:
+
+```powershell
+schtasks /Create /TN "PauliusChess monthly FIDE update" /SC MONTHLY /D 2 /ST 09:00 /TR "pwsh -NoProfile -ExecutionPolicy Bypass -File D:\Projects\PauliusChess\scripts\monthly.ps1"
+Set-ScheduledTask -TaskName "PauliusChess monthly FIDE update" -Settings (New-ScheduledTaskSettingsSet -StartWhenAvailable -RunOnlyIfNetworkAvailable -AllowStartIfOnBatteries)
+```
 
 ## Configuration
 

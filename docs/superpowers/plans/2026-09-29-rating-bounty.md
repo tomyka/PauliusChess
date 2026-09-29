@@ -21,7 +21,7 @@
 | Baseline | The first published rating in each type sets the record and pays nothing. Past earnings are recalculated with the tiers. An optional `start: { month, record }` per type in `config.json` overrides this, for example to honour amounts already paid at the old flat €3 rate. |
 | Unrated months | A `null` rating carries the record forward and pays nothing. The chart line breaks there. |
 | Hosting | GitHub Pages from a public repo, with no login needed to view. |
-| Schedule | `cron: "0 6 2 * *"`, plus manual `workflow_dispatch`. Monthly data commits keep the repo active, so GitHub does not disable the schedule after 60 days. |
+| Schedule | A Windows scheduled task on the owner's PC runs on the 2nd at 09:00, and catches up after a missed start. It runs `scripts/monthly.ps1`, which fetches, commits and pushes. The GitHub workflow only tests and deploys on push. The first plan was a GitHub `cron`, but a probe on 2026-09-29 showed ratings.fide.com times out from GitHub runners, while www.fide.com answers. |
 
 ## File structure
 
@@ -37,7 +37,8 @@
 | `test/earnings.test.mjs` | The pay rule. |
 | `test/report.test.mjs` | FIDE parsing and a hand-checked total against a real captured response. |
 | `test/fixtures/fide-12859168.json` | FIDE response captured 2026-09-29. |
-| `.github/workflows/update.yml` | Monthly fetch, commit, Pages deploy. |
+| `.github/workflows/update.yml` | Test and Pages deploy on push. |
+| `scripts/monthly.ps1` | Monthly job for Windows Task Scheduler: pull, update, commit, push. |
 
 ### `data.json` shape
 
@@ -363,6 +364,12 @@ The page reuses the mockup's `<style>` block unchanged, apart from dropping the 
 - [x] **Step 5: Improve the Next-euro copy.** The next-tier hint reads "from 2001: €3/pt" instead of "2000 starts". The ledger shows every payout, with a total row.
 - [x] **Step 6: Verify.** Run `node --check` on the extracted script. Serve `site/` locally and take Playwright screenshots at 900px (light) and 390px (dark). Check for label overlap and horizontal page scroll.
 - [x] **Step 7: Commit** with `git commit -m "feat: rating bounty dashboard"`
+
+### Task 7: Move the monthly fetch to the owner's PC
+
+- [x] **Step 1:** Remove `schedule` and the fetch/commit steps from the workflow, and scope permissions per job.
+- [x] **Step 2:** Add `scripts/monthly.ps1` and register the scheduled task (see README).
+- [x] **Step 3:** Run the task once. Expected: the log shows `Ratings to <month>`, and a data change is pushed and deployed.
 
 ### Task 6: Schedule and publish
 
