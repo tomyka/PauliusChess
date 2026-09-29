@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paulius Rating Bounty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow column; summary tiles, then two main charts, then the ladder and the ledger. */
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --ink: #14171c; --ink-2: #4c5361; --ink-3: #7a8190;
+  --line: #e2e5ea; --grid: #edf0f3;
+  --tier-a: #f3f5f8; --tier-b: #e9edf2;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  --good: #0ca30c;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121418; --surface: #1a1d22; --ink: #f2f4f7; --ink-2: #b9bfca; --ink-3: #8a91a0;
+  --line: #2c3139; --grid: #23272e; --tier-a: #1d2026; --tier-b: #22262d;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #121418; --surface: #1a1d22; --ink: #f2f4f7; --ink-2: #b9bfca; --ink-3: #8a91a0;
+  --line: #2c3139; --grid: #23272e; --tier-a: #1d2026; --tier-b: #22262d;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body); margin: 0; }
+.wrap { max-width: 880px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 56px; display: grid; gap: 28px; }
+h1, h2 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
+h1 { font-size: 2rem; line-height: 1.1; font-weight: 700; }
+h2 { font-size: 1.25rem; font-weight: 700; }
+.eyebrow { font: 500 .72rem/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.lede { color: var(--ink-2); max-width: 62ch; margin: 6px 0 0; }
+header { display: grid; gap: 6px; }
+
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 4px; min-width: 0; }
+.tile .v { font: 700 1.6rem/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+.tile .k { font-size: .8rem; color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+.tile .d { font: 400 .78rem/1.3 var(--f-mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+@media (max-width: 640px) { .tiles { grid-template-columns: repeat(2, 1fr); } h1 { font-size: 1.6rem; } }
+
+section.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.card-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 10px 20px; }
+.card-head p { margin: 4px 0 0; color: var(--ink-2); font-size: .9rem; max-width: 60ch; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .82rem; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw-line { width: 18px; height: 2px; }
+.sw-step { width: 18px; height: 0; border-top: 2px dashed var(--ink-3); }
+
+.panel { display: grid; gap: 2px; }
+.panel-title { display: flex; justify-content: space-between; gap: 10px; font-size: .85rem; }
+.panel-title b { font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+.panel-title span { font-family: var(--f-mono); color: var(--ink-3); font-size: .78rem; font-variant-numeric: tabular-nums; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+svg text { font-family: var(--f-mono); font-size: 11px; fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+svg .tierlab { fill: var(--ink-3); font-size: 10.5px; }
+
+.ladder { display: grid; gap: 18px; }
+.rung { display: grid; grid-template-columns: 110px 1fr; gap: 6px 14px; align-items: center; }
+.rung .name { font-weight: 600; font-size: .9rem; display: flex; align-items: center; gap: 6px; }
+.track { position: relative; height: 26px; border-radius: 4px; background: var(--tier-a); overflow: hidden; }
+.track .fill { position: absolute; inset: 0 auto 0 0; border-radius: 4px 0 0 4px; }
+.track .now { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+.rung .meta { grid-column: 2; font: 400 .8rem/1.4 var(--f-mono); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 4px 16px; font-variant-numeric: tabular-nums; }
+.rung .meta b { color: var(--ink); font-weight: 500; }
+@media (max-width: 520px) { .rung { grid-template-columns: 1fr; } .rung .meta { grid-column: 1; } }
+
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .85rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+th { font: 500 .7rem/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+td.eur { font-weight: 600; }
+.cat { display: inline-flex; align-items: center; gap: 6px; }
+
+.tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font: 400 .78rem/1.45 var(--f-mono); box-shadow: 0 4px 16px rgb(0 0 0 / .12); font-variant-numeric: tabular-nums; z-index: 5; min-width: 150px; }
+.tip .t { font-weight: 500; margin-bottom: 2px; }
+.tip .row { display: flex; justify-content: space-between; gap: 14px; }
+.tip .row span:first-child { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+footer { color: var(--ink-3); font-size: .8rem; }
+a { color: inherit; }
+.error { color: var(--ink-2); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="meta">Rating bounty</div>
+    <h1 id="title">Rating Bounty</h1>
+    <p class="lede">Every new record rating pays out. Each rating type keeps its own record, and points only pay once: after a drop, nothing is earned until the old record is beaten.</p>
+  </header>
+
+  <div class="tiles" id="tiles"></div>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>Rating and record high</h2>
+        <p>The solid line is the monthly rating. The dashed line is the record high, which never goes down. Money is earned only where the solid line pushes the dashed one up. Shaded bands show the euro rate per point.</p>
+      </div>
+      <div class="legend"><span><i class="sw-line" style="background:var(--ink-2)"></i>Rating</span><span><i class="sw-step"></i>Record high</span></div>
+    </div>
+    <div id="panels" style="display:grid;gap:18px"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>Money earned over time</h2>
+        <p>Running total in euros, stacked by rating type. Flat stretches are months with no new record.</p>
+      </div>
+      <div class="legend" id="legend2"></div>
+    </div>
+    <div id="money"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>Next euro</h2>
+        <p>How far each rating is from paying again, and what the next point is worth.</p>
+      </div>
+    </div>
+    <div class="ladder" id="ladder"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>Payout ledger</h2>
+        <p>One row per month with a new record, newest first. This is the list to settle up from.</p>
+      </div>
+    </div>
+    <div class="tablewrap"><table id="ledger"></table></div>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script type="module">
+const COLORS = { standard: "var(--s1)", rapid: "var(--s2)", blitz: "var(--s3)" };
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
+const toDate = m => new Date(+m.slice(0, 4), +m.slice(5, 7) - 1, 1);
+const fmtM = d => d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+const eur = n => "€" + n.toLocaleString("en-GB");
+// Polyline through the non-null values, broken at gaps.
+// An isolated month gets a zero-length segment so the round line cap draws it as a dot.
+const linePath = (vals, x, y) => vals.map((v, i) => {
+  if (v === null) return "";
+  if (i && vals[i - 1] !== null) return `L${x(i)},${y(v)}`;
+  return `M${x(i)},${y(v)}` + (vals[i + 1] == null ? "h0" : "");
+}).join("");
+
+let data;
+try {
+  const res = await fetch("data.json", { cache: "no-cache" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  data = await res.json();
+} catch (err) {
+  document.querySelector(".wrap").insertAdjacentHTML("beforeend", `<p class="error">Could not load the rating data (${err.message}).</p>`);
+  throw err;
+}
+
+const MONTHS = data.months.map(toDate);
+const last = MONTHS.length - 1;
+const TIERS = data.tiers.map(t => [t.from, t.to ?? 3000, t.eur]);
+const CATS = Object.entries(data.categories).map(([key, c]) => ({
+  key, name: c.name, color: COLORS[key],
+  r: c.months.map(m => m.rating), rec: c.months.map(m => m.record),
+  gain: c.months.map(m => m.earned), cum: c.months.map(m => m.total),
+  ledger: c.payouts.map(p => ({ ...p, i: data.months.indexOf(p.month) })),
+}));
+
+// Header and footer
+const { name, fideId } = data.player;
+const firstName = name.split(" ")[0];
+document.title = `${firstName} Rating Bounty`;
+document.getElementById("title").textContent = name;
+document.getElementById("meta").innerHTML = `Rating bounty &middot; <a href="https://ratings.fide.com/profile/${fideId}">FIDE ID ${fideId}</a> &middot; ratings to ${fmtM(MONTHS[last])}`;
+const rates = data.tiers.map((t, k) => t.to === null ? `€${t.eur} above ${t.from}` : k === 0 ? `€${t.eur} per point up to ${t.to}` : `€${t.eur} for ${t.from + 1}&ndash;${t.to}`);
+const updated = new Date(`${data.updatedAt}T12:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+document.getElementById("footer").innerHTML = `Pay rates: ${rates.join(", ")}. Data from ratings.fide.com, refreshed on the 2nd of each month. Last updated ${updated}.`;
+
+// Tiles
+const thisMonth = CATS.reduce((s, c) => s + c.gain[last], 0);
+document.getElementById("tiles").innerHTML =
+  `<div class="tile"><div class="k">Total earned</div><div class="v">${eur(data.total)}</div><div class="d">${thisMonth ? `+${eur(thisMonth)}` : "nothing new"} in ${fmtM(MONTHS[last])}</div></div>` +
+  CATS.map(c => `<div class="tile"><div class="k"><i class="dot" style="background:${c.color}"></i>${c.name}</div><div class="v">${eur(c.cum[last])}</div><div class="d">record ${c.rec[last] ?? "–"} &middot; now ${c.r[last] ?? "–"}</div></div>`).join("");
+
+// Tooltip
+const tip = document.getElementById("tip");
+function showTip(e, html) {
+  tip.innerHTML = html; tip.hidden = false;
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX + 14, y = e.clientY - h - 10;
+  if (x + w > innerWidth - 8) x = e.clientX - w - 14;
+  if (y < 8) y = e.clientY + 16;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+const hideTip = () => tip.hidden = true;
+const row = (label, val, color) => `<div class="row"><span>${color ? `<i class="dot" style="background:${color}"></i>` : ""}${label}</span><span>${val}</span></div>`;
+const hoverIndex = (e, svg, W, M) => {
+  const b = svg.getBoundingClientRect(), px = (e.clientX - b.left) / b.width * W;
+  return Math.max(0, Math.min(last, Math.round((px - M.l) / (W - M.l - M.r) * last)));
+};
+
+// Rating and record high: one panel per rating type, with tier bands
+const W = 720, H = 190, M = { l: 44, r: 12, t: 8, b: 22 };
+const x = i => M.l + (i / last) * (W - M.l - M.r);
+const yearTicks = MONTHS.map((d, i) => d.getMonth() === 0 ? i : -1).filter(i => i >= 0);
+function panel(c) {
+  const rated = c.r.filter(v => v !== null);
+  const lo = Math.floor((Math.min(...rated) - 40) / 50) * 50, hi = Math.ceil((Math.max(...rated) + 40) / 50) * 50;
+  const y = v => M.t + (1 - (v - lo) / (hi - lo)) * (H - M.t - M.b);
+  const wrap = document.createElement("div"); wrap.className = "panel";
+  wrap.innerHTML = `<div class="panel-title"><b><i class="dot" style="background:${c.color}"></i>${c.name}</b><span>record ${c.rec[last]} &middot; ${eur(c.cum[last])}</span></div>`;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${c.name} rating history with record high and pay tiers` }, wrap);
+  TIERS.forEach(([a, b, p], k) => {
+    if (b <= lo || a >= hi) return;
+    const ya = y(Math.max(a, lo)), yb = y(Math.min(b, hi));
+    el("rect", { x: M.l, y: yb, width: W - M.l - M.r, height: ya - yb, fill: k % 2 ? "var(--tier-b)" : "var(--tier-a)" }, svg);
+    // Labels sit at the left, where the rating line starts low; bands too thin for text stay unlabelled.
+    if (ya - yb >= 16) { const t = el("text", { x: M.l + 6, y: yb + 13, class: "tierlab" }, svg); t.textContent = `€${p}/pt`; }
+    if (a > lo) { el("line", { x1: M.l, x2: W - M.r, y1: ya, y2: ya, stroke: "var(--line)" }, svg); const l = el("text", { x: M.l - 6, y: ya + 4, "text-anchor": "end" }, svg); l.textContent = a; }
+  });
+  yearTicks.forEach(i => { const t = el("text", { x: x(i), y: H - 6, "text-anchor": "middle" }, svg); t.textContent = MONTHS[i].getFullYear(); el("line", { x1: x(i), x2: x(i), y1: H - M.b, y2: H - M.b + 4, stroke: "var(--ink-3)" }, svg); });
+  let step = "";
+  c.rec.forEach((v, i) => { if (v === null) return; step += c.rec[i - 1] == null ? `M${x(i)},${y(v)}` : `L${x(i)},${y(c.rec[i - 1])}L${x(i)},${y(v)}`; });
+  el("path", { d: step, fill: "none", stroke: "var(--ink-3)", "stroke-width": 1.5, "stroke-dasharray": "4 3" }, svg);
+  el("path", { d: linePath(c.r, x, y), fill: "none", stroke: c.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+  c.gain.forEach((g, i) => { if (g) el("circle", { cx: x(i), cy: y(c.r[i]), r: 3.5, fill: c.color, stroke: "var(--surface)", "stroke-width": 1.5 }, svg); });
+  if (c.r[last] !== null) el("circle", { cx: x(last), cy: y(c.r[last]), r: 4.5, fill: c.color, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+  const cross = el("line", { y1: M.t, y2: H - M.b, stroke: "var(--ink-3)", "stroke-width": 1, visibility: "hidden" }, svg);
+  const hit = el("rect", { x: M.l, y: 0, width: W - M.l - M.r, height: H, fill: "transparent" }, svg);
+  hit.addEventListener("pointermove", e => {
+    const i = hoverIndex(e, svg, W, M);
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility", "visible");
+    const v = c.r[i], prev = i ? c.r[i - 1] : null;
+    const delta = v !== null && prev !== null ? ` (${v - prev >= 0 ? "+" : ""}${v - prev})` : "";
+    showTip(e, `<div class="t">${c.name} &middot; ${fmtM(MONTHS[i])}</div>` + row("Rating", v === null ? "not rated" : `${v}${delta}`, c.color) + row("Record", c.rec[i] ?? "–") + row("Earned", c.gain[i] ? eur(c.gain[i]) : "–"));
+  });
+  hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(); });
+  return wrap;
+}
+const panels = document.getElementById("panels");
+CATS.forEach(c => panels.appendChild(panel(c)));
+
+// Money earned over time: stacked cumulative area
+(() => {
+  const H2 = 260, M2 = { l: 52, r: 76, t: 10, b: 22 };
+  const x2 = i => M2.l + (i / last) * (W - M2.l - M2.r);
+  const max = Math.max(500, Math.ceil(data.total / 500) * 500);
+  const y2 = v => M2.t + (1 - v / max) * (H2 - M2.t - M2.b);
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H2}`, role: "img", "aria-label": "Cumulative euros earned, stacked by rating type" });
+  for (let v = 0; v <= max; v += max / 4) {
+    el("line", { x1: M2.l, x2: W - M2.r, y1: y2(v), y2: y2(v), stroke: v ? "var(--grid)" : "var(--line)" }, svg);
+    const t = el("text", { x: M2.l - 8, y: y2(v) + 4, "text-anchor": "end" }, svg); t.textContent = eur(v);
+  }
+  yearTicks.forEach(i => { const t = el("text", { x: x2(i), y: H2 - 6, "text-anchor": "middle" }, svg); t.textContent = MONTHS[i].getFullYear(); });
+  const base = MONTHS.map(() => 0);
+  const labels = [];
+  CATS.forEach(c => {
+    const top = base.map((b, i) => b + c.cum[i]);
+    let d = top.map((v, i) => `${i ? "L" : "M"}${x2(i)},${y2(v)}`).join("");
+    for (let i = last; i >= 0; i--) d += `L${x2(i)},${y2(base[i])}`;
+    el("path", { d: d + "Z", fill: c.color, "fill-opacity": .85, stroke: "var(--surface)", "stroke-width": 2, "stroke-linejoin": "round" }, svg);
+    labels.push({ c, y: y2((top[last] + base[last]) / 2) + 4 });
+    top.forEach((v, i) => base[i] = v);
+  });
+  // End labels run bottom to top; push each one up so thin bands never overlap.
+  for (let k = 1; k < labels.length; k++) labels[k].y = Math.min(labels[k].y, labels[k - 1].y - 14);
+  labels.forEach(({ c, y }) => { const t = el("text", { x: W - M2.r + 8, y, style: "fill:var(--ink-2)" }, svg); t.textContent = `${c.name.slice(0, 3)} ${eur(c.cum[last])}`; });
+  const cross = el("line", { y1: M2.t, y2: H2 - M2.b, stroke: "var(--ink)", "stroke-width": 1, visibility: "hidden" }, svg);
+  const hit = el("rect", { x: M2.l, y: 0, width: W - M2.l - M2.r, height: H2, fill: "transparent" }, svg);
+  hit.addEventListener("pointermove", e => {
+    const i = hoverIndex(e, svg, W, M2);
+    cross.setAttribute("x1", x2(i)); cross.setAttribute("x2", x2(i)); cross.setAttribute("visibility", "visible");
+    showTip(e, `<div class="t">${fmtM(MONTHS[i])}</div>` + CATS.slice().reverse().map(c => row(c.name, eur(c.cum[i]) + (c.gain[i] ? ` (+${c.gain[i]})` : ""), c.color)).join("") + row("Total", eur(CATS.reduce((s, c) => s + c.cum[i], 0))));
+  });
+  hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(); });
+  document.getElementById("money").appendChild(svg);
+  document.getElementById("legend2").innerHTML = CATS.map(c => `<span><i class="dot" style="background:${c.color}"></i>${c.name}</span>`).join("");
+})();
+
+// Next euro: current rating against the record, within the current pay tier
+document.getElementById("ladder").innerHTML = CATS.filter(c => c.rec[last] !== null).map(c => {
+  const rec = c.rec[last], now = c.r[last] ?? rec;
+  const k = TIERS.findIndex(([a, b]) => rec + 1 > a && rec + 1 <= b);
+  const [a, b, p] = TIERS[k], next = TIERS[k + 1];
+  const lo = Math.max(a, Math.min(now, rec) - 150);
+  const pct = v => Math.max(0, Math.min(100, (v - lo) / (b - lo) * 100));
+  const need = rec - now + 1;
+  return `<div class="rung">
+    <div class="name"><i class="dot" style="background:${c.color}"></i>${c.name}</div>
+    <div class="track" role="img" aria-label="${c.name}: rating ${now}, record ${rec}, tier ends at ${b}">
+      <div class="fill" style="width:${pct(rec)}%;background:${c.color};opacity:.3"></div>
+      <div class="fill" style="width:${pct(now)}%;background:${c.color}"></div>
+      <div class="now" style="left:calc(${pct(rec)}% - 1px)"></div>
+    </div>
+    <div class="meta"><span>now <b>${now}</b></span><span>record <b>${rec}</b></span><span><b>${need}</b> pt${need > 1 ? "s" : ""} to pay again</span><span>next point <b>${eur(p)}</b></span>${next ? `<span>from ${b + 1}: ${eur(next[2])}/pt</span>` : ""}</div>
+  </div>`;
+}).join("");
+
+// Payout ledger
+const rows = CATS.flatMap(c => c.ledger.map(l => ({ ...l, c }))).sort((a, b) => b.i - a.i || a.c.key.localeCompare(b.c.key));
+document.getElementById("ledger").innerHTML = `<thead><tr><th>Month</th><th>Type</th><th>Old record</th><th>New record</th><th>Points</th><th>Earned</th></tr></thead><tbody>` +
+  rows.map(r => `<tr><td>${fmtM(MONTHS[r.i])}</td><td><span class="cat"><i class="dot" style="background:${r.c.color}"></i>${r.c.name}</span></td><td>${r.from}</td><td>${r.to}</td><td>+${r.points}</td><td class="eur">${eur(r.eur)}</td></tr>`).join("") +
+  `<tr><td colspan="5" style="text-align:left;color:var(--ink-3)">${rows.length} payouts</td><td class="eur">${eur(data.total)}</td></tr></tbody>`;
+</script>

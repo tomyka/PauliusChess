@@ -1,0 +1,1000 @@
+{
+  "player": {
+    "name": "Paulius Konovalovas",
+    "fideId": 12859168
+  },
+  "updatedAt": "2026-09-29",
+  "tiers": [
+    {
+      "from": 0,
+      "to": 1800,
+      "eur": 1
+    },
+    {
+      "from": 1800,
+      "to": 2000,
+      "eur": 2
+    },
+    {
+      "from": 2000,
+      "to": 2200,
+      "eur": 3
+    },
+    {
+      "from": 2200,
+      "to": 2400,
+      "eur": 4
+    },
+    {
+      "from": 2400,
+      "to": null,
+      "eur": 5
+    }
+  ],
+  "months": [
+    "2023-12",
+    "2024-01",
+    "2024-02",
+    "2024-03",
+    "2024-04",
+    "2024-05",
+    "2024-06",
+    "2024-07",
+    "2024-08",
+    "2024-09",
+    "2024-10",
+    "2024-11",
+    "2024-12",
+    "2025-01",
+    "2025-02",
+    "2025-03",
+    "2025-04",
+    "2025-05",
+    "2025-06",
+    "2025-07",
+    "2025-08",
+    "2025-09",
+    "2025-10",
+    "2025-11",
+    "2025-12",
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06",
+    "2026-07",
+    "2026-08",
+    "2026-09"
+  ],
+  "categories": {
+    "standard": {
+      "name": "Standard",
+      "months": [
+        {
+          "month": "2023-12",
+          "rating": null,
+          "record": null,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-01",
+          "rating": null,
+          "record": null,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-02",
+          "rating": null,
+          "record": null,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-03",
+          "rating": null,
+          "record": null,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-04",
+          "rating": 1557,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-05",
+          "rating": 1557,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-06",
+          "rating": 1485,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-07",
+          "rating": 1487,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-08",
+          "rating": 1474,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-09",
+          "rating": 1494,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-10",
+          "rating": 1494,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-11",
+          "rating": 1480,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-12",
+          "rating": 1479,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2025-01",
+          "rating": 1479,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2025-02",
+          "rating": 1575,
+          "record": 1575,
+          "earned": 18,
+          "total": 18
+        },
+        {
+          "month": "2025-03",
+          "rating": 1663,
+          "record": 1663,
+          "earned": 88,
+          "total": 106
+        },
+        {
+          "month": "2025-04",
+          "rating": 1657,
+          "record": 1663,
+          "earned": 0,
+          "total": 106
+        },
+        {
+          "month": "2025-05",
+          "rating": 1657,
+          "record": 1663,
+          "earned": 0,
+          "total": 106
+        },
+        {
+          "month": "2025-06",
+          "rating": 1657,
+          "record": 1663,
+          "earned": 0,
+          "total": 106
+        },
+        {
+          "month": "2025-07",
+          "rating": 1653,
+          "record": 1663,
+          "earned": 0,
+          "total": 106
+        },
+        {
+          "month": "2025-08",
+          "rating": 1653,
+          "record": 1663,
+          "earned": 0,
+          "total": 106
+        },
+        {
+          "month": "2025-09",
+          "rating": 1761,
+          "record": 1761,
+          "earned": 98,
+          "total": 204
+        },
+        {
+          "month": "2025-10",
+          "rating": 1761,
+          "record": 1761,
+          "earned": 0,
+          "total": 204
+        },
+        {
+          "month": "2025-11",
+          "rating": 1761,
+          "record": 1761,
+          "earned": 0,
+          "total": 204
+        },
+        {
+          "month": "2025-12",
+          "rating": 1843,
+          "record": 1843,
+          "earned": 125,
+          "total": 329
+        },
+        {
+          "month": "2026-01",
+          "rating": 1843,
+          "record": 1843,
+          "earned": 0,
+          "total": 329
+        },
+        {
+          "month": "2026-02",
+          "rating": 1821,
+          "record": 1843,
+          "earned": 0,
+          "total": 329
+        },
+        {
+          "month": "2026-03",
+          "rating": 1768,
+          "record": 1843,
+          "earned": 0,
+          "total": 329
+        },
+        {
+          "month": "2026-04",
+          "rating": 1781,
+          "record": 1843,
+          "earned": 0,
+          "total": 329
+        },
+        {
+          "month": "2026-05",
+          "rating": 1813,
+          "record": 1843,
+          "earned": 0,
+          "total": 329
+        },
+        {
+          "month": "2026-06",
+          "rating": 1825,
+          "record": 1843,
+          "earned": 0,
+          "total": 329
+        },
+        {
+          "month": "2026-07",
+          "rating": 1825,
+          "record": 1843,
+          "earned": 0,
+          "total": 329
+        },
+        {
+          "month": "2026-08",
+          "rating": 1939,
+          "record": 1939,
+          "earned": 192,
+          "total": 521
+        },
+        {
+          "month": "2026-09",
+          "rating": 2070,
+          "record": 2070,
+          "earned": 332,
+          "total": 853
+        }
+      ],
+      "payouts": [
+        {
+          "month": "2025-02",
+          "from": 1557,
+          "to": 1575,
+          "points": 18,
+          "eur": 18
+        },
+        {
+          "month": "2025-03",
+          "from": 1575,
+          "to": 1663,
+          "points": 88,
+          "eur": 88
+        },
+        {
+          "month": "2025-09",
+          "from": 1663,
+          "to": 1761,
+          "points": 98,
+          "eur": 98
+        },
+        {
+          "month": "2025-12",
+          "from": 1761,
+          "to": 1843,
+          "points": 82,
+          "eur": 125
+        },
+        {
+          "month": "2026-08",
+          "from": 1843,
+          "to": 1939,
+          "points": 96,
+          "eur": 192
+        },
+        {
+          "month": "2026-09",
+          "from": 1939,
+          "to": 2070,
+          "points": 131,
+          "eur": 332
+        }
+      ],
+      "total": 853
+    },
+    "rapid": {
+      "name": "Rapid",
+      "months": [
+        {
+          "month": "2023-12",
+          "rating": 1153,
+          "record": 1153,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-01",
+          "rating": 1039,
+          "record": 1153,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-02",
+          "rating": 1080,
+          "record": 1153,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-03",
+          "rating": 1448,
+          "record": 1448,
+          "earned": 295,
+          "total": 295
+        },
+        {
+          "month": "2024-04",
+          "rating": 1505,
+          "record": 1505,
+          "earned": 57,
+          "total": 352
+        },
+        {
+          "month": "2024-05",
+          "rating": 1463,
+          "record": 1505,
+          "earned": 0,
+          "total": 352
+        },
+        {
+          "month": "2024-06",
+          "rating": 1508,
+          "record": 1508,
+          "earned": 3,
+          "total": 355
+        },
+        {
+          "month": "2024-07",
+          "rating": 1570,
+          "record": 1570,
+          "earned": 62,
+          "total": 417
+        },
+        {
+          "month": "2024-08",
+          "rating": 1502,
+          "record": 1570,
+          "earned": 0,
+          "total": 417
+        },
+        {
+          "month": "2024-09",
+          "rating": 1536,
+          "record": 1570,
+          "earned": 0,
+          "total": 417
+        },
+        {
+          "month": "2024-10",
+          "rating": 1606,
+          "record": 1606,
+          "earned": 36,
+          "total": 453
+        },
+        {
+          "month": "2024-11",
+          "rating": 1707,
+          "record": 1707,
+          "earned": 101,
+          "total": 554
+        },
+        {
+          "month": "2024-12",
+          "rating": 1664,
+          "record": 1707,
+          "earned": 0,
+          "total": 554
+        },
+        {
+          "month": "2025-01",
+          "rating": 1717,
+          "record": 1717,
+          "earned": 10,
+          "total": 564
+        },
+        {
+          "month": "2025-02",
+          "rating": 1628,
+          "record": 1717,
+          "earned": 0,
+          "total": 564
+        },
+        {
+          "month": "2025-03",
+          "rating": 1631,
+          "record": 1717,
+          "earned": 0,
+          "total": 564
+        },
+        {
+          "month": "2025-04",
+          "rating": 1634,
+          "record": 1717,
+          "earned": 0,
+          "total": 564
+        },
+        {
+          "month": "2025-05",
+          "rating": 1743,
+          "record": 1743,
+          "earned": 26,
+          "total": 590
+        },
+        {
+          "month": "2025-06",
+          "rating": 1754,
+          "record": 1754,
+          "earned": 11,
+          "total": 601
+        },
+        {
+          "month": "2025-07",
+          "rating": 1724,
+          "record": 1754,
+          "earned": 0,
+          "total": 601
+        },
+        {
+          "month": "2025-08",
+          "rating": 1682,
+          "record": 1754,
+          "earned": 0,
+          "total": 601
+        },
+        {
+          "month": "2025-09",
+          "rating": 1787,
+          "record": 1787,
+          "earned": 33,
+          "total": 634
+        },
+        {
+          "month": "2025-10",
+          "rating": 1861,
+          "record": 1861,
+          "earned": 135,
+          "total": 769
+        },
+        {
+          "month": "2025-11",
+          "rating": 1855,
+          "record": 1861,
+          "earned": 0,
+          "total": 769
+        },
+        {
+          "month": "2025-12",
+          "rating": 1868,
+          "record": 1868,
+          "earned": 14,
+          "total": 783
+        },
+        {
+          "month": "2026-01",
+          "rating": 1828,
+          "record": 1868,
+          "earned": 0,
+          "total": 783
+        },
+        {
+          "month": "2026-02",
+          "rating": 1844,
+          "record": 1868,
+          "earned": 0,
+          "total": 783
+        },
+        {
+          "month": "2026-03",
+          "rating": 1844,
+          "record": 1868,
+          "earned": 0,
+          "total": 783
+        },
+        {
+          "month": "2026-04",
+          "rating": 1840,
+          "record": 1868,
+          "earned": 0,
+          "total": 783
+        },
+        {
+          "month": "2026-05",
+          "rating": 1862,
+          "record": 1868,
+          "earned": 0,
+          "total": 783
+        },
+        {
+          "month": "2026-06",
+          "rating": 1942,
+          "record": 1942,
+          "earned": 148,
+          "total": 931
+        },
+        {
+          "month": "2026-07",
+          "rating": 1911,
+          "record": 1942,
+          "earned": 0,
+          "total": 931
+        },
+        {
+          "month": "2026-08",
+          "rating": 1964,
+          "record": 1964,
+          "earned": 44,
+          "total": 975
+        },
+        {
+          "month": "2026-09",
+          "rating": 2029,
+          "record": 2029,
+          "earned": 159,
+          "total": 1134
+        }
+      ],
+      "payouts": [
+        {
+          "month": "2024-03",
+          "from": 1153,
+          "to": 1448,
+          "points": 295,
+          "eur": 295
+        },
+        {
+          "month": "2024-04",
+          "from": 1448,
+          "to": 1505,
+          "points": 57,
+          "eur": 57
+        },
+        {
+          "month": "2024-06",
+          "from": 1505,
+          "to": 1508,
+          "points": 3,
+          "eur": 3
+        },
+        {
+          "month": "2024-07",
+          "from": 1508,
+          "to": 1570,
+          "points": 62,
+          "eur": 62
+        },
+        {
+          "month": "2024-10",
+          "from": 1570,
+          "to": 1606,
+          "points": 36,
+          "eur": 36
+        },
+        {
+          "month": "2024-11",
+          "from": 1606,
+          "to": 1707,
+          "points": 101,
+          "eur": 101
+        },
+        {
+          "month": "2025-01",
+          "from": 1707,
+          "to": 1717,
+          "points": 10,
+          "eur": 10
+        },
+        {
+          "month": "2025-05",
+          "from": 1717,
+          "to": 1743,
+          "points": 26,
+          "eur": 26
+        },
+        {
+          "month": "2025-06",
+          "from": 1743,
+          "to": 1754,
+          "points": 11,
+          "eur": 11
+        },
+        {
+          "month": "2025-09",
+          "from": 1754,
+          "to": 1787,
+          "points": 33,
+          "eur": 33
+        },
+        {
+          "month": "2025-10",
+          "from": 1787,
+          "to": 1861,
+          "points": 74,
+          "eur": 135
+        },
+        {
+          "month": "2025-12",
+          "from": 1861,
+          "to": 1868,
+          "points": 7,
+          "eur": 14
+        },
+        {
+          "month": "2026-06",
+          "from": 1868,
+          "to": 1942,
+          "points": 74,
+          "eur": 148
+        },
+        {
+          "month": "2026-08",
+          "from": 1942,
+          "to": 1964,
+          "points": 22,
+          "eur": 44
+        },
+        {
+          "month": "2026-09",
+          "from": 1964,
+          "to": 2029,
+          "points": 65,
+          "eur": 159
+        }
+      ],
+      "total": 1134
+    },
+    "blitz": {
+      "name": "Blitz",
+      "months": [
+        {
+          "month": "2023-12",
+          "rating": null,
+          "record": null,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-01",
+          "rating": null,
+          "record": null,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-02",
+          "rating": null,
+          "record": null,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-03",
+          "rating": null,
+          "record": null,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-04",
+          "rating": 1557,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-05",
+          "rating": 1535,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-06",
+          "rating": 1535,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-07",
+          "rating": 1499,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-08",
+          "rating": 1484,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-09",
+          "rating": 1507,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-10",
+          "rating": 1427,
+          "record": 1557,
+          "earned": 0,
+          "total": 0
+        },
+        {
+          "month": "2024-11",
+          "rating": 1617,
+          "record": 1617,
+          "earned": 60,
+          "total": 60
+        },
+        {
+          "month": "2024-12",
+          "rating": 1571,
+          "record": 1617,
+          "earned": 0,
+          "total": 60
+        },
+        {
+          "month": "2025-01",
+          "rating": 1541,
+          "record": 1617,
+          "earned": 0,
+          "total": 60
+        },
+        {
+          "month": "2025-02",
+          "rating": 1551,
+          "record": 1617,
+          "earned": 0,
+          "total": 60
+        },
+        {
+          "month": "2025-03",
+          "rating": 1551,
+          "record": 1617,
+          "earned": 0,
+          "total": 60
+        },
+        {
+          "month": "2025-04",
+          "rating": 1551,
+          "record": 1617,
+          "earned": 0,
+          "total": 60
+        },
+        {
+          "month": "2025-05",
+          "rating": 1634,
+          "record": 1634,
+          "earned": 17,
+          "total": 77
+        },
+        {
+          "month": "2025-06",
+          "rating": 1634,
+          "record": 1634,
+          "earned": 0,
+          "total": 77
+        },
+        {
+          "month": "2025-07",
+          "rating": 1620,
+          "record": 1634,
+          "earned": 0,
+          "total": 77
+        },
+        {
+          "month": "2025-08",
+          "rating": 1620,
+          "record": 1634,
+          "earned": 0,
+          "total": 77
+        },
+        {
+          "month": "2025-09",
+          "rating": 1620,
+          "record": 1634,
+          "earned": 0,
+          "total": 77
+        },
+        {
+          "month": "2025-10",
+          "rating": 1628,
+          "record": 1634,
+          "earned": 0,
+          "total": 77
+        },
+        {
+          "month": "2025-11",
+          "rating": 1705,
+          "record": 1705,
+          "earned": 71,
+          "total": 148
+        },
+        {
+          "month": "2025-12",
+          "rating": 1783,
+          "record": 1783,
+          "earned": 78,
+          "total": 226
+        },
+        {
+          "month": "2026-01",
+          "rating": 1855,
+          "record": 1855,
+          "earned": 127,
+          "total": 353
+        },
+        {
+          "month": "2026-02",
+          "rating": 1786,
+          "record": 1855,
+          "earned": 0,
+          "total": 353
+        },
+        {
+          "month": "2026-03",
+          "rating": 1786,
+          "record": 1855,
+          "earned": 0,
+          "total": 353
+        },
+        {
+          "month": "2026-04",
+          "rating": 1786,
+          "record": 1855,
+          "earned": 0,
+          "total": 353
+        },
+        {
+          "month": "2026-05",
+          "rating": 1786,
+          "record": 1855,
+          "earned": 0,
+          "total": 353
+        },
+        {
+          "month": "2026-06",
+          "rating": 1853,
+          "record": 1855,
+          "earned": 0,
+          "total": 353
+        },
+        {
+          "month": "2026-07",
+          "rating": 1839,
+          "record": 1855,
+          "earned": 0,
+          "total": 353
+        },
+        {
+          "month": "2026-08",
+          "rating": 1965,
+          "record": 1965,
+          "earned": 220,
+          "total": 573
+        },
+        {
+          "month": "2026-09",
+          "rating": 1965,
+          "record": 1965,
+          "earned": 0,
+          "total": 573
+        }
+      ],
+      "payouts": [
+        {
+          "month": "2024-11",
+          "from": 1557,
+          "to": 1617,
+          "points": 60,
+          "eur": 60
+        },
+        {
+          "month": "2025-05",
+          "from": 1617,
+          "to": 1634,
+          "points": 17,
+          "eur": 17
+        },
+        {
+          "month": "2025-11",
+          "from": 1634,
+          "to": 1705,
+          "points": 71,
+          "eur": 71
+        },
+        {
+          "month": "2025-12",
+          "from": 1705,
+          "to": 1783,
+          "points": 78,
+          "eur": 78
+        },
+        {
+          "month": "2026-01",
+          "from": 1783,
+          "to": 1855,
+          "points": 72,
+          "eur": 127
+        },
+        {
+          "month": "2026-08",
+          "from": 1855,
+          "to": 1965,
+          "points": 110,
+          "eur": 220
+        }
+      ],
+      "total": 573
+    }
+  },
+  "total": 2560
+}
