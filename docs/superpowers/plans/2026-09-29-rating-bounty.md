@@ -371,6 +371,20 @@ The page reuses the mockup's `<style>` block unchanged, apart from dropping the 
 - [x] **Step 2:** Add `scripts/monthly.ps1` and register the scheduled task (see README).
 - [x] **Step 3:** Run the task once. Expected: the log shows `Ratings to <month>`, and a data change is pushed and deployed.
 
+### Task 8: Payout tracking
+
+**Files:** `src/payouts.mjs` (validation and date order), `test/payouts.test.mjs`, `scripts/record-payout.mjs`, `.github/workflows/record-payout.yml`, `site/payouts.json`, `site/index.html`.
+
+- [x] **Step 1:** `parsePayout` accepts `{ date, eur, note }` form text. It rejects dates that don't exist and amounts that aren't positive or have more than 2 decimals, and it accepts a comma as the decimal mark. `addPayout` keeps the list in date order, with same-day entries in the order they were added.
+- [x] **Step 2:** A `workflow_dispatch` form with inputs `amount`, `date` and `note`. The inputs are passed through env, never interpolated into the shell. The job commits `site/payouts.json` and then dispatches `update.yml` to redeploy, because a push made with GITHUB_TOKEN does not trigger other workflows.
+- [x] **Step 3:** Dashboard:
+  - Owed / Earned / Paid tiles, with Owed as the headline.
+  - A paid step line on the money chart, with Earned / Paid / Owed in the tooltip.
+  - A Payments table (date, note, amount, paid so far, owed after), with an empty state that links to the form.
+  - The payout ledger is renamed "Earnings ledger".
+  - Notes are HTML-escaped.
+- [x] **Step 4:** Screenshot with sample payments at 900px (light) and 390px (dark). The live `payouts.json` starts empty.
+
 ### Task 6: Schedule and publish
 
 **Files:**

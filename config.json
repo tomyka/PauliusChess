@@ -1,5 +1,6 @@
 {
   "player": { "name": "Paulius Konovalovas", "fideId": 12859168 },
+  "repo": "tomyka/PauliusChess",
   "categories": {
     "standard": {},
     "rapid": {},

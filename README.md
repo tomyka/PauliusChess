@@ -29,6 +29,22 @@ schtasks /Create /TN "PauliusChess monthly FIDE update" /SC MONTHLY /D 2 /ST 09:
 Set-ScheduledTask -TaskName "PauliusChess monthly FIDE update" -Settings (New-ScheduledTaskSettingsSet -StartWhenAvailable -RunOnlyIfNetworkAvailable -AllowStartIfOnBatteries)
 ```
 
+## Recording a payout
+
+On GitHub, open **Actions**, then **Record payout**, then **Run workflow**, and fill in:
+
+- **Amount** in euros, for example `150` or `12.50`,
+- **Date** as `YYYY-MM-DD`; leave it empty for today,
+- **Note**, optional, for example `cash`.
+
+The form also works in the GitHub mobile app. Only the repo owner can run it. The payment is added to `site/payouts.json` and the page republishes in about a minute. To fix a mistake, edit `site/payouts.json` on GitHub.
+
+Payments count against the total earned, not against one rating type. The dashboard shows:
+
+- **Tiles:** owed, earned and paid.
+- **Money chart:** a paid step line.
+- **Payments table:** each payment with the running paid total and the balance still owed after it.
+
 ## Configuration
 
 `config.json` holds the player and one entry per rating type. To start counting from an agreed point, rather than from the first FIDE rating, give that type a `start`:

@@ -36,13 +36,16 @@ h2 { font-size: 1.25rem; font-weight: 700; }
 .lede { color: var(--ink-2); max-width: 62ch; margin: 6px 0 0; }
 header { display: grid; gap: 6px; }
 
-.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.tile.lead .v { font-size: 2rem; }
+.tile.lead { border-color: var(--ink-3); }
 .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 4px; min-width: 0; }
 .tile .v { font: 700 1.6rem/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
 .tile .k { font-size: .8rem; color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
 .tile .d { font: 400 .78rem/1.3 var(--f-mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
-@media (max-width: 640px) { .tiles { grid-template-columns: repeat(2, 1fr); } h1 { font-size: 1.6rem; } }
+@media (max-width: 640px) { .tiles { grid-template-columns: repeat(2, 1fr); } .tile.lead { grid-column: 1 / -1; } h1 { font-size: 1.6rem; } }
+.empty { color: var(--ink-2); font-size: .9rem; margin: 0; }
 
 section.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
 .card-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 10px 20px; }
@@ -94,7 +97,10 @@ a { color: inherit; }
     <p class="lede">Every new record rating pays out. Each rating type keeps its own record, and points only pay once: after a drop, nothing is earned until the old record is beaten.</p>
   </header>
 
-  <div class="tiles" id="tiles"></div>
+  <div style="display:grid;gap:12px">
+    <div class="tiles" id="money-tiles"></div>
+    <div class="tiles" id="tiles"></div>
+  </div>
 
   <section class="card">
     <div class="card-head">
@@ -111,11 +117,21 @@ a { color: inherit; }
     <div class="card-head">
       <div>
         <h2>Money earned over time</h2>
-        <p>Running total in euros, stacked by rating type. Flat stretches are months with no new record.</p>
+        <p>Running total earned in euros, stacked by rating type. Flat stretches are months with no new record. The black step line is the total paid so far; the gap between the two is what is owed.</p>
       </div>
       <div class="legend" id="legend2"></div>
     </div>
     <div id="money"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>Payments</h2>
+        <p>Money handed over, newest first. Payments count against the total, not against one rating type.</p>
+      </div>
+    </div>
+    <div class="tablewrap" id="payments"></div>
   </section>
 
   <section class="card">
@@ -131,8 +147,8 @@ a { color: inherit; }
   <section class="card">
     <div class="card-head">
       <div>
-        <h2>Payout ledger</h2>
-        <p>One row per month with a new record, newest first. This is the list to settle up from.</p>
+        <h2>Earnings ledger</h2>
+        <p>One row per month with a new record, newest first.</p>
       </div>
     </div>
     <div class="tablewrap"><table id="ledger"></table></div>
@@ -148,7 +164,8 @@ const NS = "http://www.w3.org/2000/svg";
 const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
 const toDate = m => new Date(+m.slice(0, 4), +m.slice(5, 7) - 1, 1);
 const fmtM = d => d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
-const eur = n => "€" + n.toLocaleString("en-GB");
+const eur = n => (n < 0 ? "−" : "") + "€" + Math.abs(n).toLocaleString("en-GB", { maximumFractionDigits: 2 });
+const fmtD = d => new Date(`${d}T12:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 // Polyline through the non-null values, broken at gaps.
 // An isolated month gets a zero-length segment so the round line cap draws it as a dot.
 const linePath = (vals, x, y) => vals.map((v, i) => {
@@ -157,11 +174,14 @@ const linePath = (vals, x, y) => vals.map((v, i) => {
   return `M${x(i)},${y(v)}` + (vals[i + 1] == null ? "h0" : "");
 }).join("");
 
-let data;
+const getJson = async (file) => {
+  const res = await fetch(file, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`${file}: HTTP ${res.status}`);
+  return res.json();
+};
+let data, payments;
 try {
-  const res = await fetch("data.json", { cache: "no-cache" });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  data = await res.json();
+  [data, payments] = await Promise.all([getJson("data.json"), getJson("payouts.json").catch(() => [])]);
 } catch (err) {
   document.querySelector(".wrap").insertAdjacentHTML("beforeend", `<p class="error">Could not load the rating data (${err.message}).</p>`);
   throw err;
@@ -177,6 +197,17 @@ const CATS = Object.entries(data.categories).map(([key, c]) => ({
   ledger: c.payouts.map(p => ({ ...p, i: data.months.indexOf(p.month) })),
 }));
 
+// Payments: running paid total, and what had been earned by each payment's date.
+const escapeHtml = s => s.replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
+const earnedBy = i => CATS.reduce((s, c) => s + c.cum[i], 0);
+// Rating month index a date falls in: FIDE publishes on the 1st, so a date counts from its own month.
+const monthIndexOf = date => { let i = 0; while (i < last && data.months[i + 1] <= date.slice(0, 7)) i++; return i; };
+let paidSoFar = 0;
+const PAID = payments.map(p => { paidSoFar += p.eur; return { ...p, cum: paidSoFar, i: monthIndexOf(p.date) }; });
+const paidTotal = paidSoFar;
+const paidBy = i => PAID.filter(p => p.i <= i).reduce((s, p) => s + p.eur, 0);
+const owed = data.total - paidTotal;
+
 // Header and footer
 const { name, fideId } = data.player;
 const firstName = name.split(" ")[0];
@@ -189,8 +220,12 @@ document.getElementById("footer").innerHTML = `Pay rates: ${rates.join(", ")}. D
 
 // Tiles
 const thisMonth = CATS.reduce((s, c) => s + c.gain[last], 0);
-document.getElementById("tiles").innerHTML =
+const lastPaid = PAID.at(-1);
+document.getElementById("money-tiles").innerHTML =
+  `<div class="tile lead"><div class="k">${owed >= 0 ? "Owed now" : "Paid ahead"}</div><div class="v">${eur(Math.abs(owed))}</div><div class="d">earned minus paid</div></div>` +
   `<div class="tile"><div class="k">Total earned</div><div class="v">${eur(data.total)}</div><div class="d">${thisMonth ? `+${eur(thisMonth)}` : "nothing new"} in ${fmtM(MONTHS[last])}</div></div>` +
+  `<div class="tile"><div class="k"><i class="sw-line" style="background:var(--ink)"></i>Total paid</div><div class="v">${eur(paidTotal)}</div><div class="d">${lastPaid ? `last ${fmtD(lastPaid.date)}` : "no payments yet"}</div></div>`;
+document.getElementById("tiles").innerHTML =
   CATS.map(c => `<div class="tile"><div class="k"><i class="dot" style="background:${c.color}"></i>${c.name}</div><div class="v">${eur(c.cum[last])}</div><div class="d">record ${c.rec[last] ?? "–"} &middot; now ${c.r[last] ?? "–"}</div></div>`).join("");
 
 // Tooltip
@@ -255,7 +290,7 @@ CATS.forEach(c => panels.appendChild(panel(c)));
 (() => {
   const H2 = 260, M2 = { l: 52, r: 76, t: 10, b: 22 };
   const x2 = i => M2.l + (i / last) * (W - M2.l - M2.r);
-  const max = Math.max(500, Math.ceil(data.total / 500) * 500);
+  const max = Math.max(500, Math.ceil(Math.max(data.total, paidTotal) / 500) * 500);
   const y2 = v => M2.t + (1 - v / max) * (H2 - M2.t - M2.b);
   const svg = el("svg", { viewBox: `0 0 ${W} ${H2}`, role: "img", "aria-label": "Cumulative euros earned, stacked by rating type" });
   for (let v = 0; v <= max; v += max / 4) {
@@ -275,18 +310,31 @@ CATS.forEach(c => panels.appendChild(panel(c)));
   });
   // End labels run bottom to top; push each one up so thin bands never overlap.
   for (let k = 1; k < labels.length; k++) labels[k].y = Math.min(labels[k].y, labels[k - 1].y - 14);
+  // Paid: a step at each payment, placed by day within its month.
+  const xDate = p => x2(Math.min(last, p.i + (p.date.slice(0, 7) === data.months[p.i] ? (+p.date.slice(8) - 1) / 31 : 0)));
+  let paidPath = `M${x2(0)},${y2(0)}`;
+  PAID.forEach(p => { paidPath += `H${xDate(p)}V${y2(p.cum)}`; });
+  el("path", { d: paidPath + `H${x2(last)}`, fill: "none", stroke: "var(--ink)", "stroke-width": 2, "stroke-linejoin": "round" }, svg);
   labels.forEach(({ c, y }) => { const t = el("text", { x: W - M2.r + 8, y, style: "fill:var(--ink-2)" }, svg); t.textContent = `${c.name.slice(0, 3)} ${eur(c.cum[last])}`; });
   const cross = el("line", { y1: M2.t, y2: H2 - M2.b, stroke: "var(--ink)", "stroke-width": 1, visibility: "hidden" }, svg);
   const hit = el("rect", { x: M2.l, y: 0, width: W - M2.l - M2.r, height: H2, fill: "transparent" }, svg);
   hit.addEventListener("pointermove", e => {
     const i = hoverIndex(e, svg, W, M2);
     cross.setAttribute("x1", x2(i)); cross.setAttribute("x2", x2(i)); cross.setAttribute("visibility", "visible");
-    showTip(e, `<div class="t">${fmtM(MONTHS[i])}</div>` + CATS.slice().reverse().map(c => row(c.name, eur(c.cum[i]) + (c.gain[i] ? ` (+${c.gain[i]})` : ""), c.color)).join("") + row("Total", eur(CATS.reduce((s, c) => s + c.cum[i], 0))));
+    showTip(e, `<div class="t">${fmtM(MONTHS[i])}</div>` + CATS.slice().reverse().map(c => row(c.name, eur(c.cum[i]) + (c.gain[i] ? ` (+${c.gain[i]})` : ""), c.color)).join("") + row("Earned", eur(earnedBy(i))) + row("Paid", eur(paidBy(i))) + row("Owed", eur(earnedBy(i) - paidBy(i))));
   });
   hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(); });
   document.getElementById("money").appendChild(svg);
-  document.getElementById("legend2").innerHTML = CATS.map(c => `<span><i class="dot" style="background:${c.color}"></i>${c.name}</span>`).join("");
+  document.getElementById("legend2").innerHTML = CATS.map(c => `<span><i class="dot" style="background:${c.color}"></i>${c.name}</span>`).join("") + `<span><i class="sw-line" style="background:var(--ink)"></i>Paid</span>`;
 })();
+
+// Payments table
+const formUrl = `https://github.com/${data.repo}/actions/workflows/record-payout.yml`;
+document.getElementById("payments").innerHTML = PAID.length
+  ? `<table><thead><tr><th>Date</th><th>Note</th><th>Amount</th><th>Paid so far</th><th>Owed after</th></tr></thead><tbody>` +
+    PAID.slice().reverse().map(p => `<tr><td>${fmtD(p.date)}</td><td>${p.note ? escapeHtml(p.note) : ""}</td><td class="eur">${eur(p.eur)}</td><td>${eur(p.cum)}</td><td>${eur(earnedBy(p.i) - p.cum)}</td></tr>`).join("") +
+    `</tbody></table>`
+  : `<p class="empty">No payments recorded yet. Add one with the <a href="${formUrl}">Record payout</a> form (repo owner only).</p>`;
 
 // Next euro: current rating against the record, within the current pay tier
 document.getElementById("ladder").innerHTML = CATS.filter(c => c.rec[last] !== null).map(c => {
@@ -311,5 +359,5 @@ document.getElementById("ladder").innerHTML = CATS.filter(c => c.rec[last] !== n
 const rows = CATS.flatMap(c => c.ledger.map(l => ({ ...l, c }))).sort((a, b) => b.i - a.i || a.c.key.localeCompare(b.c.key));
 document.getElementById("ledger").innerHTML = `<thead><tr><th>Month</th><th>Type</th><th>Old record</th><th>New record</th><th>Points</th><th>Earned</th></tr></thead><tbody>` +
   rows.map(r => `<tr><td>${fmtM(MONTHS[r.i])}</td><td><span class="cat"><i class="dot" style="background:${r.c.color}"></i>${r.c.name}</span></td><td>${r.from}</td><td>${r.to}</td><td>+${r.points}</td><td class="eur">${eur(r.eur)}</td></tr>`).join("") +
-  `<tr><td colspan="5" style="text-align:left;color:var(--ink-3)">${rows.length} payouts</td><td class="eur">${eur(data.total)}</td></tr></tbody>`;
+  `<tr><td colspan="5" style="text-align:left;color:var(--ink-3)">${rows.length} new records</td><td class="eur">${eur(data.total)}</td></tr></tbody>`;
 </script>
