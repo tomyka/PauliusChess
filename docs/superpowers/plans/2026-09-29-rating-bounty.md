@@ -385,6 +385,17 @@ The page reuses the mockup's `<style>` block unchanged, apart from dropping the 
   - Notes are HTML-escaped.
 - [x] **Step 4:** Screenshot with sample payments at 900px (light) and 390px (dark). The live `payouts.json` starts empty.
 
+### Task 9: Payments from the owner's sheet (replaces Task 8's form)
+
+The owner keeps entering payments in the existing sheet, so the sheet is the only source. `site/payouts.json` and the Record payout workflow are removed.
+
+- [x] **Step 1:** `site/payments.mjs` runs in the browser and under node:test.
+  - `parseCsv` handles RFC 4180 CSV.
+  - `paymentsFromYearTab` reads the Paid column of a year tab by its Lithuanian month names, dates each payment at the end of its month, and skips the carry-over December before "Sausis".
+  - `paymentsFromTabs` drops any tab whose content duplicates an earlier year's, because gviz answers a missing tab name with the first tab (verified 2026-09-29).
+- [x] **Step 2:** The dashboard fetches `gviz/tq?tqx=out:csv&sheet=<year>` for each year from `paymentsSheet.fromYear` to the latest rating year. CORS was verified (the response allows the requesting origin). If a fetch fails, Paid and Owed show "–" and the paid line is hidden.
+- [x] **Step 3:** Verify against the live sheet: 12 payments, €1,514 paid, €575 owed. The result is the same with a non-existent 2027 tab included.
+
 ### Task 6: Schedule and publish
 
 **Files:**

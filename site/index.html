@@ -156,6 +156,7 @@ a { color: inherit; }
 <div class="tip" id="tip" hidden></div>
 
 <script type="module">
+import { paymentsFromTabs, yearTabUrl } from "./payments.mjs";
 const COLORS = { standard: "var(--s1)", rapid: "var(--s2)", blitz: "var(--s3)" };
 const NS = "http://www.w3.org/2000/svg";
 const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
@@ -176,12 +177,29 @@ const getJson = async (file) => {
   if (!res.ok) throw new Error(`${file}: HTTP ${res.status}`);
   return res.json();
 };
-let data, payments;
+let data;
 try {
-  [data, payments] = await Promise.all([getJson("data.json"), getJson("payouts.json").catch(() => [])]);
+  data = await getJson("data.json");
 } catch (err) {
   document.querySelector(".wrap").insertAdjacentHTML("beforeend", `<p class="error">Could not load the rating data (${err.message}).</p>`);
   throw err;
+}
+
+// Payments: the Paid column of each year tab in the owner's sheet, read live.
+// If the sheet can't be read, paid and owed show as unknown rather than as zero.
+const { id: sheetId, fromYear } = data.paymentsSheet;
+let payments = [], paymentsError = "";
+try {
+  const years = [];
+  for (let y = fromYear; y <= +data.months[data.months.length - 1].slice(0, 4); y++) years.push(y);
+  const tabs = await Promise.all(years.map(async y => {
+    const res = await fetch(yearTabUrl(sheetId, y), { cache: "no-store" });
+    if (!res.ok) throw new Error(`tab ${y}: HTTP ${res.status}`);
+    return { year: y, csv: await res.text() };
+  }));
+  payments = paymentsFromTabs(tabs);
+} catch (err) {
+  paymentsError = err.message;
 }
 
 const MONTHS = data.months.map(toDate);
@@ -218,9 +236,11 @@ document.getElementById("footer").innerHTML = `Pay rates: ${rates.join(", ")}. D
 const thisMonth = CATS.reduce((s, c) => s + c.gain[last], 0);
 const lastPaid = PAID.at(-1);
 document.getElementById("money-tiles").innerHTML =
-  `<div class="tile lead"><div class="k">${owed >= 0 ? "Owed now" : "Paid ahead"}</div><div class="v">${eur(Math.abs(owed))}</div><div class="d">earned minus paid</div></div>` +
+  (paymentsError
+    ? `<div class="tile lead"><div class="k">Owed now</div><div class="v">–</div><div class="d">payments sheet unavailable</div></div>`
+    : `<div class="tile lead"><div class="k">${owed >= 0 ? "Owed now" : "Paid ahead"}</div><div class="v">${eur(Math.abs(owed))}</div><div class="d">earned minus paid</div></div>`) +
   `<div class="tile"><div class="k">Total earned</div><div class="v">${eur(data.total)}</div><div class="d">${thisMonth ? `+${eur(thisMonth)}` : "nothing new"} in ${fmtM(MONTHS[last])}</div></div>` +
-  `<div class="tile"><div class="k"><i class="sw-line" style="background:var(--ink)"></i>Total paid</div><div class="v">${eur(paidTotal)}</div><div class="d">${lastPaid ? `last ${fmtD(lastPaid.date)}` : "no payments yet"}</div></div>`;
+  `<div class="tile"><div class="k"><i class="sw-line" style="background:var(--ink)"></i>Total paid</div><div class="v">${paymentsError ? "–" : eur(paidTotal)}</div><div class="d">${paymentsError ? "payments sheet unavailable" : lastPaid ? `last ${fmtD(lastPaid.date)}` : "no payments yet"}</div></div>`;
 document.getElementById("tiles").innerHTML =
   CATS.map(c => `<div class="tile"><div class="k"><i class="dot" style="background:${c.color}"></i>${c.name}</div><div class="v">${eur(c.cum[last])}</div><div class="d">record ${c.rec[last] ?? "–"} &middot; now ${c.r[last] ?? "–"}</div></div>`).join("");
 
@@ -314,13 +334,13 @@ const yearTicks = MONTHS.map((d, i) => d.getMonth() === 0 ? i : -1).filter(i => 
   const xDate = p => x2(Math.min(last, p.i + (p.date.slice(0, 7) === data.months[p.i] ? (+p.date.slice(8) - 1) / 31 : 0)));
   let paidPath = `M${x2(0)},${y2(0)}`;
   PAID.forEach(p => { paidPath += `H${xDate(p)}V${y2(p.cum)}`; });
-  el("path", { d: paidPath + `H${x2(last)}`, fill: "none", stroke: "var(--ink)", "stroke-width": 2, "stroke-linejoin": "round" }, svg);
+  if (!paymentsError) el("path", { d: paidPath + `H${x2(last)}`, fill: "none", stroke: "var(--ink)", "stroke-width": 2, "stroke-linejoin": "round" }, svg);
   const cross = el("line", { y1: M2.t, y2: H2 - M2.b, stroke: "var(--ink)", "stroke-width": 1, visibility: "hidden" }, svg);
   const hit = el("rect", { x: M2.l, y: 0, width: W - M2.l - M2.r, height: H2, fill: "transparent" }, svg);
   hit.addEventListener("pointermove", e => {
     const i = hoverIndex(e, svg, W, M2);
     cross.setAttribute("x1", x2(i)); cross.setAttribute("x2", x2(i)); cross.setAttribute("visibility", "visible");
-    showTip(e, `<div class="t">${fmtM(MONTHS[i])}</div>` + CATS.slice().reverse().map(c => row(c.name, eur(c.cum[i]) + (c.gain[i] ? ` (+${c.gain[i]})` : ""), c.color)).join("") + row("Earned", eur(earnedBy(i))) + row("Paid", eur(paidBy(i))) + row("Owed", eur(earnedBy(i) - paidBy(i))));
+    showTip(e, `<div class="t">${fmtM(MONTHS[i])}</div>` + CATS.slice().reverse().map(c => row(c.name, eur(c.cum[i]) + (c.gain[i] ? ` (+${c.gain[i]})` : ""), c.color)).join("") + row("Earned", eur(earnedBy(i))) + (paymentsError ? "" : row("Paid", eur(paidBy(i))) + row("Owed", eur(earnedBy(i) - paidBy(i)))));
   });
   hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(); });
   document.getElementById("money").appendChild(svg);
@@ -328,12 +348,12 @@ const yearTicks = MONTHS.map((d, i) => d.getMonth() === 0 ? i : -1).filter(i => 
 })();
 
 // Payments table
-const formUrl = `https://github.com/${data.repo}/actions/workflows/record-payout.yml`;
 document.getElementById("payments").innerHTML = PAID.length
   ? `<table class="pay"><thead><tr><th>Date</th><th>Amount</th><th>Owed after</th></tr></thead><tbody>` +
     PAID.slice().reverse().map(p => `<tr><td>${p.date.slice(0, 4)}/${p.date.slice(5, 7)}</td><td class="eur">${eur(p.eur)}</td><td>${eur(earnedBy(p.i) - p.cum)}</td></tr>`).join("") +
     `</tbody></table>`
-  : `<p class="empty">No payments recorded yet. Add one with the <a href="${formUrl}">Record payout</a> form (repo owner only).</p>`;
+  : `<p class="empty">No payments recorded yet.</p>`;
+if (paymentsError) document.getElementById("payments").innerHTML = `<p class="empty">Payments could not be read from the sheet (${paymentsError}).</p>`;
 
 // Next euro: current rating against the record, within the current pay tier
 document.getElementById("ladder").innerHTML = CATS.filter(c => c.rec[last] !== null).map(c => {

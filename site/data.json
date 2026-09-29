@@ -4,6 +4,10 @@
     "fideId": 12859168
   },
   "repo": "tomyka/PauliusChess",
+  "paymentsSheet": {
+    "id": "16TO3IoOoXsTkMRncxWJumHKxiAm0Bym1wtKuvUYtlC8",
+    "fromYear": 2025
+  },
   "updatedAt": "2026-09-29",
   "tiers": [
     {

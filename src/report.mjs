@@ -22,6 +22,7 @@ export function buildReport(config, history, updatedAt) {
   return {
     player: config.player,
     repo: config.repo,
+    paymentsSheet: config.paymentsSheet,
     updatedAt,
     tiers: TIERS,
     months: history.map((h) => h.month),

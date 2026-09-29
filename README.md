@@ -31,19 +31,19 @@ Set-ScheduledTask -TaskName "PauliusChess monthly FIDE update" -Settings (New-Sc
 
 ## Recording a payout
 
-On GitHub, open **Actions**, then **Record payout**, then **Run workflow**, and fill in:
+Enter it in the Paid column of the owner's Google Sheet, "Pauliaus FIDE progresas", in that month's row of the year's tab. The dashboard reads the sheet each time the page loads, so there is nothing else to run. A change shows up within a few minutes.
 
-- **Amount** in euros, for example `150` or `12.50`,
-- **Date** as `YYYY-MM-DD`; leave it empty for today,
-- **Note**, optional, for example `cash`.
+- **Tabs:** one tab per year, named `2025`, `2026` and so on. Months are in Lithuanian (Sausis to Gruodis). The dashboard reads every year from `paymentsSheet.fromYear` in `config.json` up to the latest rating month. A new year's tab needs the same layout: a "Menuo" column of month names and a "Paid" column.
+- **Carry-over row:** a tab may begin with the previous December as a carry-over row. It is ignored, so that December is not counted twice.
+- **Dates:** each payment is dated the last day of its month.
+- **Sharing:** the sheet must stay shared as "Anyone with the link: Viewer". If it can't be read, Owed and Paid show "–" instead of wrong numbers.
+- **Code:** `site/payments.mjs`, tested in `test/payments.test.mjs`.
 
-The form also works in the GitHub mobile app. Only the repo owner can run it. The payment is added to `site/payouts.json` and the page republishes in about a minute. To fix a mistake, edit `site/payouts.json` on GitHub.
-
-Payments count against the total earned, not against one rating type. The dashboard shows:
+The dashboard shows:
 
 - **Tiles:** owed, earned and paid.
 - **Money chart:** a paid step line.
-- **Payments table:** each payment's year/month (e.g. 2026/09), amount, and the balance still owed after it. Notes are stored in `site/payouts.json` but not shown.
+- **Payments table:** each payment's year/month (e.g. 2026/09), amount, and the balance still owed after it.
 
 ## Configuration
 
@@ -55,7 +55,7 @@ Payments count against the total earned, not against one rating type. The dashbo
 
 Months up to and including `month` then pay nothing, and `record` is the record to beat from the next month.
 
-The current baselines come from the owner's "Pauliaus FIDE progresas" sheet: the agreement started in January 2025 at Standard 1479, Rapid 1717 and Blitz 1542. The sheet's payments were imported into `site/payouts.json`, each dated the last day of its month.
+The current baselines come from the owner's "Pauliaus FIDE progresas" sheet: the agreement started in January 2025 at Standard 1479, Rapid 1717 and Blitz 1542. Payments are read live from the same sheet (see Recording a payout).
 
 The update refuses to lower any total already earned. After a deliberate change that lowers totals, such as a new baseline, run `node scripts/update.mjs --accept-lower-totals` once.
 
