@@ -331,7 +331,7 @@ const yearTicks = MONTHS.map((d, i) => d.getMonth() === 0 ? i : -1).filter(i => 
 const formUrl = `https://github.com/${data.repo}/actions/workflows/record-payout.yml`;
 document.getElementById("payments").innerHTML = PAID.length
   ? `<table class="pay"><thead><tr><th>Date</th><th>Amount</th><th>Owed after</th></tr></thead><tbody>` +
-    PAID.slice().reverse().map(p => `<tr><td>${p.date.slice(2, 4)}/${p.date.slice(5, 7)}</td><td class="eur">${eur(p.eur)}</td><td>${eur(earnedBy(p.i) - p.cum)}</td></tr>`).join("") +
+    PAID.slice().reverse().map(p => `<tr><td>${p.date.slice(0, 4)}/${p.date.slice(5, 7)}</td><td class="eur">${eur(p.eur)}</td><td>${eur(earnedBy(p.i) - p.cum)}</td></tr>`).join("") +
     `</tbody></table>`
   : `<p class="empty">No payments recorded yet. Add one with the <a href="${formUrl}">Record payout</a> form (repo owner only).</p>`;
 
