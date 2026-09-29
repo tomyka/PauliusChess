@@ -20,8 +20,8 @@ export function earningsBetween(from, to) {
 }
 
 // series: [{ month: "YYYY-MM", rating: number | null }] in ascending month order.
-// start (optional): { month, record } — nothing up to and including `month` pays,
-// and `record` is the record in force after it. Without it, the first published
+// start (optional): { month, record } — the agreement month. Nothing up to and including it pays,
+// months before it show no record, and `record` is the one to beat after it. Without it, the first published
 // rating sets the record and pays nothing.
 export function computeCategory(series, start) {
   let record = start ? start.record : null;
@@ -30,7 +30,12 @@ export function computeCategory(series, start) {
   const payouts = [];
   for (const { month, rating } of series) {
     let earned = 0;
-    if (start && month <= start.month) {
+    if (start && month < start.month) {
+      // Before the agreement there is no record to show.
+      months.push({ month, rating, record: null, earned, total });
+      continue;
+    }
+    if (start && month === start.month) {
       record = start.record;
     } else if (rating !== null) {
       if (record === null) {

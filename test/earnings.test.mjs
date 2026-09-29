@@ -49,9 +49,9 @@ test("unrated months carry the record and pay nothing", () => {
   assert.deepEqual(months.map((m) => m.earned), [0, 0, 0, 20]);
 });
 
-test("a start point freezes earlier months and sets the record", () => {
+test("a start point pays nothing up to its month, shows no record before it, and sets the record", () => {
   const { months, payouts } = computeCategory(series([1650, 1720, 1690, 1750]), { month: "2024-02", record: 1700 });
-  assert.deepEqual(months.map((m) => m.record), [1700, 1700, 1700, 1750]);
+  assert.deepEqual(months.map((m) => m.record), [null, 1700, 1700, 1750]);
   assert.deepEqual(payouts, [{ month: "2024-04", from: 1700, to: 1750, points: 50, eur: 50 }]);
 });
 

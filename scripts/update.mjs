@@ -10,7 +10,8 @@ const history = await fetchHistory(config.player.fideId);
 const report = buildReport(config, history, new Date().toISOString().slice(0, 10));
 
 const previous = await readFile(dataFile, "utf8").then(JSON.parse, () => null);
-if (previous) assertNoLoss(previous, report);
+// --accept-lower-totals: for a deliberate config change (e.g. a new baseline), never for the monthly run.
+if (previous && !process.argv.includes("--accept-lower-totals")) assertNoLoss(previous, report);
 
 await writeFile(dataFile, JSON.stringify(report, null, 2) + "\n");
 console.log(`Ratings to ${report.months.at(-1)}, total earned €${report.total}`);

@@ -41,3 +41,11 @@ test("a new report may not lower money already earned", () => {
 test("an unknown rating type in the config is rejected", () => {
   assert.throws(() => buildReport({ ...config, categories: { Standard: {} } }, normalizeHistory(raw), "x"), /Unknown rating type/);
 });
+
+test("the agreed January 2025 baseline reproduces the sheet's €2,089", () => {
+  const start = (record) => ({ start: { month: "2025-01", record } });
+  const agreed = { ...config, categories: { standard: start(1479), rapid: start(1717), blitz: start(1542) } };
+  const report = buildReport(agreed, normalizeHistory(raw), "2026-09-29");
+  assert.deepEqual(Object.values(report.categories).map((c) => c.total), [931, 570, 588]);
+  assert.equal(report.total, 2089);
+});

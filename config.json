@@ -2,8 +2,8 @@
   "player": { "name": "Paulius Konovalovas", "fideId": 12859168 },
   "repo": "tomyka/PauliusChess",
   "categories": {
-    "standard": {},
-    "rapid": {},
-    "blitz": {}
+    "standard": { "start": { "month": "2025-01", "record": 1479 } },
+    "rapid": { "start": { "month": "2025-01", "record": 1717 } },
+    "blitz": { "start": { "month": "2025-01", "record": 1542 } }
   }
 }

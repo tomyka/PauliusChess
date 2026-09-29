@@ -55,6 +55,10 @@ Payments count against the total earned, not against one rating type. The dashbo
 
 Months up to and including `month` then pay nothing, and `record` is the record to beat from the next month.
 
+The current baselines come from the owner's "Pauliaus FIDE progresas" sheet: the agreement started in January 2025 at Standard 1479, Rapid 1717 and Blitz 1542. The sheet's payments were imported into `site/payouts.json`, each dated the last day of its month.
+
+The update refuses to lower any total already earned. After a deliberate change that lowers totals, such as a new baseline, run `node scripts/update.mjs --accept-lower-totals` once.
+
 ## Local use
 
 Needs Node 22 or newer. There are no dependencies.
