@@ -43,7 +43,7 @@ Payments count against the total earned, not against one rating type. The dashbo
 
 - **Tiles:** owed, earned and paid.
 - **Money chart:** a paid step line.
-- **Payments table:** each payment with the running paid total and the balance still owed after it.
+- **Payments table:** each payment's year/month, amount, and the balance still owed after it. Notes are stored in `site/payouts.json` but not shown.
 
 ## Configuration
 

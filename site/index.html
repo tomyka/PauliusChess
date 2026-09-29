@@ -75,6 +75,7 @@ th, td { text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--li
 th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
 th { font: 500 .7rem/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 td.eur { font-weight: 600; }
+table.pay th:nth-child(2), table.pay td:nth-child(2) { text-align: right; }
 .cat { display: inline-flex; align-items: center; gap: 6px; }
 
 .tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font: 400 .78rem/1.45 var(--f-mono); box-shadow: 0 4px 16px rgb(0 0 0 / .12); font-variant-numeric: tabular-nums; z-index: 5; min-width: 150px; }
@@ -124,7 +125,7 @@ a { color: inherit; }
     <div class="card-head">
       <div>
         <h2>Payments</h2>
-        <p>Money handed over, newest first. Payments count against the total, not against one rating type.</p>
+        <p>Money handed over, newest first (year/month). Payments count against the total, not against one rating type.</p>
       </div>
     </div>
     <div class="tablewrap" id="payments"></div>
@@ -194,7 +195,6 @@ const CATS = Object.entries(data.categories).map(([key, c]) => ({
 }));
 
 // Payments: running paid total, and what had been earned by each payment's date.
-const escapeHtml = s => s.replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
 const earnedBy = i => CATS.reduce((s, c) => s + c.cum[i], 0);
 // Rating month index a date falls in: FIDE publishes on the 1st, so a date counts from its own month.
 const monthIndexOf = date => { let i = 0; while (i < last && data.months[i + 1] <= date.slice(0, 7)) i++; return i; };
@@ -330,8 +330,8 @@ const yearTicks = MONTHS.map((d, i) => d.getMonth() === 0 ? i : -1).filter(i => 
 // Payments table
 const formUrl = `https://github.com/${data.repo}/actions/workflows/record-payout.yml`;
 document.getElementById("payments").innerHTML = PAID.length
-  ? `<table><thead><tr><th>Date</th><th>Note</th><th>Amount</th><th>Paid so far</th><th>Owed after</th></tr></thead><tbody>` +
-    PAID.slice().reverse().map(p => `<tr><td>${fmtD(p.date)}</td><td>${p.note ? escapeHtml(p.note) : ""}</td><td class="eur">${eur(p.eur)}</td><td>${eur(p.cum)}</td><td>${eur(earnedBy(p.i) - p.cum)}</td></tr>`).join("") +
+  ? `<table class="pay"><thead><tr><th>Date</th><th>Amount</th><th>Owed after</th></tr></thead><tbody>` +
+    PAID.slice().reverse().map(p => `<tr><td>${p.date.slice(2, 4)}/${p.date.slice(5, 7)}</td><td class="eur">${eur(p.eur)}</td><td>${eur(earnedBy(p.i) - p.cum)}</td></tr>`).join("") +
     `</tbody></table>`
   : `<p class="empty">No payments recorded yet. Add one with the <a href="${formUrl}">Record payout</a> form (repo owner only).</p>`;
 
