@@ -163,7 +163,6 @@ const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS,
 const toDate = m => new Date(+m.slice(0, 4), +m.slice(5, 7) - 1, 1);
 const fmtM = d => d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 const eur = n => (n < 0 ? "−" : "") + "€" + Math.abs(n).toLocaleString("en-GB", { maximumFractionDigits: 2 });
-const fmtD = d => new Date(`${d}T12:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 // Polyline through the non-null values, broken at gaps.
 // An isolated month gets a zero-length segment so the round line cap draws it as a dot.
 const linePath = (vals, x, y) => vals.map((v, i) => {
@@ -240,7 +239,7 @@ document.getElementById("money-tiles").innerHTML =
     ? `<div class="tile lead"><div class="k">Owed now</div><div class="v">–</div><div class="d">payments sheet unavailable</div></div>`
     : `<div class="tile lead"><div class="k">${owed >= 0 ? "Owed now" : "Paid ahead"}</div><div class="v">${eur(Math.abs(owed))}</div><div class="d">earned minus paid</div></div>`) +
   `<div class="tile"><div class="k">Total earned</div><div class="v">${eur(data.total)}</div><div class="d">${thisMonth ? `+${eur(thisMonth)}` : "nothing new"} in ${fmtM(MONTHS[last])}</div></div>` +
-  `<div class="tile"><div class="k"><i class="sw-line" style="background:var(--ink)"></i>Total paid</div><div class="v">${paymentsError ? "–" : eur(paidTotal)}</div><div class="d">${paymentsError ? "payments sheet unavailable" : lastPaid ? `last ${fmtD(lastPaid.date)}` : "no payments yet"}</div></div>`;
+  `<div class="tile"><div class="k"><i class="sw-line" style="background:var(--ink)"></i>Total paid</div><div class="v">${paymentsError ? "–" : eur(paidTotal)}</div><div class="d">${paymentsError ? "payments sheet unavailable" : lastPaid ? `last in ${fmtM(toDate(lastPaid.date))}` : "no payments yet"}</div></div>`;
 document.getElementById("tiles").innerHTML =
   CATS.map(c => `<div class="tile"><div class="k"><i class="dot" style="background:${c.color}"></i>${c.name}</div><div class="v">${eur(c.cum[last])}</div><div class="d">record ${c.rec[last] ?? "–"} &middot; now ${c.r[last] ?? "–"}</div></div>`).join("");
 
